@@ -1,0 +1,82 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: auth_postgres
+    restart: on-failure
+    environment:
+      POSTGRES_DB: auth_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      SPRING_KAFKA_PRODUCER_RETRIES: 10
+      SPRING_KAFKA_PRODUCER_PROPERTIES_RETRY_BACKOFF_MS: 500
+
+  akhq:
+    image: tchiotludo/akhq
+    restart: on-failure
+    ports:
+      - "9001:8080"
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          server:
+            access-log: true
+
+          security:
+            enabled: true
+            basic-auth:
+              - username: admin
+                password: admin
+                roles:
+                  - admin
+
+          connections:
+            local-kafka:
+              properties:
+                bootstrap.servers: kafka:9092
+
+        micronaut:
+          security:
+            enabled: true
+            authentication: bearer
+            token:
+              jwt:
+                enabled: true
+                signatures:
+                  secret:
+                    generator:
+                      secret: vJAJGzMCvBxRLrHx6ufd3aPQj1SZhs8x0cROA+WzI9GUIRr2h4FN/yNUsdYTyZH1ijZzY4QlS/wZI2NFKZy4/g==
+
+    depends_on:
+      - kafka

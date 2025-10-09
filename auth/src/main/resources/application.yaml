@@ -1,0 +1,79 @@
+server:
+  port: 9090
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  datasource:
+    #    url: jdbc:postgresql://localhost:5432/auth_service_db
+    url: jdbc:postgresql://localhost:5433/auth_db
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+  jwt:
+    access:
+      secret: "SuperSecretKeyForAccessTokenSuperSecretKeyForAccessToken"
+      expiration: 900000   # 15 minute
+    refresh:
+      secret: "AnotherSuperSecretKeyForRefreshTokenSuperSecretAnotherSuperSecretKeyForRefreshToken"
+      expiration: 604800000 # 7 days
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: simple.taxiofficial@gmail.com
+    password: ${EMAIL_PASSWORD}   # пароль приложения из Google
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+        transport:
+          protocol: smtp
+    debug: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+
+  kafka:
+    topics:
+      user-registration: user-saga-topic
+    bootstrap-servers: localhost:29092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+
+google:
+  app: ${GOOGLE_APP_NAME:SimpleTaxiAuth}
+  client-id: ${GOOGLE_CLIENT_ID}
+  client-secret: ${GOOGLE_CLIENT_SECRET}
+  token-uri: https://oauth2.googleapis.com/token
+
+logging:
+  level:
+    org.springframework.web: ${REST_LOG_LEVEL:TRACE}
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+
+dev:
+  email:
+    verification: false
