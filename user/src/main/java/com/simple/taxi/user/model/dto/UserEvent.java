@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.UUID;
 
 @Data
-public class UserCreatedEvent {
+public class UserEvent {
     private Payload payload;
 
     @Data

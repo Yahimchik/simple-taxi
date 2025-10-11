@@ -16,11 +16,12 @@ import java.util.UUID;
 public class UserProfile {
 
     @Id
-    private UUID userId;
+    private UUID id;
 
     private String firstName;
     private String lastName;
     private String avatarUrl;
+    private String email;
     private String phone;
     private Instant createdAt;
     private Instant updatedAt;
