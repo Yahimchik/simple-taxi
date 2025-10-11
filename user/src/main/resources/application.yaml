@@ -1,0 +1,24 @@
+spring:
+  liquibase:
+    url: jdbc:postgresql://localhost:5434/user_db
+    user: user
+    password: password
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5434/user_db
+    username: user
+    password: password
+
+  kafka:
+    bootstrap-servers: localhost:29092
+    consumer:
+      group-id: user-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+logging:
+  level:
+    liquibase: DEBUG
