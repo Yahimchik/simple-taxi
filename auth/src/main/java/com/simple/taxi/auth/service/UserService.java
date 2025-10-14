@@ -37,4 +37,6 @@ public interface UserService {
     void removeRole(UUID userId, RoleEnum roleEnum);
 
     Set<RoleEnum> getRoles(UUID userId);
+
+    void delete(UUID userId);
 }

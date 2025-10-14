@@ -214,6 +214,14 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toSet());
     }
 
+    @Override
+    @Transactional
+    public void delete(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+        userRepository.delete(user);
+    }
+
     private User findUser(UUID id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));

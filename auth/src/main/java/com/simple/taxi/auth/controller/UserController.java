@@ -45,9 +45,22 @@ public class UserController {
         return ResponseEntity.ok(userService.register(request));
     }
 
-    @PutMapping(UPDATE_USER)
+    @PatchMapping(UPDATE_USER)
     @SecurityRequirement(name = SECURITY_REQUIREMENT)
     public ResponseEntity<UserDTO> updateUser(@LoggedInUserId UUID userId, @RequestBody UpdateUserDTO user) {
         return ResponseEntity.ok(userService.updateUser(userId, user));
+    }
+
+    @DeleteMapping("/delete")
+    @SecurityRequirement(name = SECURITY_REQUIREMENT)
+    public ResponseEntity<Void> deleteUser(@LoggedInUserId UUID userId){
+        userService.delete(userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteUserById(@PathVariable UUID id){
+        userService.delete(id);
+        return ResponseEntity.ok().build();
     }
 }
