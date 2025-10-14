@@ -89,7 +89,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                     if (!exists) return Mono.error(new NotFoundException(USER_PROFILE_NOT_FOUND, userId));
                     return repository.deleteById(userId);
                 })
-                .doOnSuccess(deleted -> {log.info("User profile deleted successfully");});
+                .doOnSuccess(deleted -> log.info("User profile deleted successfully"));
 
     }
 

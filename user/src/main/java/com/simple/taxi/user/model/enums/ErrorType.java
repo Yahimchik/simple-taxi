@@ -10,6 +10,8 @@ public enum ErrorType {
 
     INTERNAL_ERROR("Internal server error"),
 
+    SETTINGS_NOT_FOUND("Settings not found"),
+
     USER_PROFILE_NOT_FOUND("User profile not found");
 
     private final String description;

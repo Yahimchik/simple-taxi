@@ -11,7 +11,6 @@ import java.util.UUID;
 @Builder
 public record UserSettingsDTO(
         UUID id,
-        UUID userId,
         Language language,
         Boolean pushEnabled,
         Boolean emailNotifications,
