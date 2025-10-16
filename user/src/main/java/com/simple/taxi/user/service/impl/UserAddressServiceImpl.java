@@ -20,7 +20,7 @@ public class UserAddressServiceImpl implements UserAddressService {
 
     private final AddressRepository addressRepository;
     private final UserAddressRepository userAddressRepository;
-    private final YandexGeocodingService yandexGeocodingService;
+    private final OpenStreetMapGeocodingService openStreetMapGeocodingService;
 
     @Override
     public Flux<Address> getUserAddresses(UUID userId) {
@@ -30,7 +30,7 @@ public class UserAddressServiceImpl implements UserAddressService {
 
     @Override
     public Mono<Void> addAddressToUser(UUID userId, AddressRequestDTO dto) {
-        return yandexGeocodingService.geocode(dto.getFormattedAddress(), dto.getLatitude(), dto.getLongitude())
+        return openStreetMapGeocodingService.geocode(dto.getFormattedAddress(), dto.getLatitude(), dto.getLongitude())
                 .flatMap(geo -> {
                     Address address = Address.builder()
                             .formattedAddress(dto.getFormattedAddress())

@@ -1,49 +1,49 @@
 package com.simple.taxi.user.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.io.pem.PemReader;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
-import java.security.Security;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.Instant;
 import java.util.Base64;
-import java.util.Date;
 import java.util.Map;
 
 public class YandexJwtGenerator {
 
-    static {
-        // Регистрируем BouncyCastle провайдер один раз
-        Security.addProvider(new BouncyCastleProvider());
-    }
-
     public static String generateJwt(Map<String, Object> keyJson) throws Exception {
+        String keyId = (String) keyJson.get("id");
+        String serviceAccountId = (String) keyJson.get("service_account_id");
         String privateKeyPem = (String) keyJson.get("private_key");
 
-        privateKeyPem = privateKeyPem
-                .replace("PLEASEDONOTREMOVETHISLINE!", "")
+        PrivateKey privateKey = loadPrivateKey(privateKeyPem);
+
+        Instant now = Instant.now();
+
+        return Jwts.builder()
+                .setHeaderParam("kid", keyId)
+                .setIssuer(serviceAccountId)
+                .setAudience("https://iam.api.cloud.yandex.net/iam/v1/tokens")
+                .setIssuedAt(java.util.Date.from(now))
+                .setExpiration(java.util.Date.from(now.plusSeconds(3600)))
+                .signWith(privateKey, SignatureAlgorithm.PS256)
+                .compact();
+    }
+
+    private static PrivateKey loadPrivateKey(String privateKeyPem) throws Exception {
+        String privateKeyContent = privateKeyPem
+                .replaceAll("(?m)^PLEASE DO NOT REMOVE THIS LINE!.*$", "")
                 .replace("-----BEGIN PRIVATE KEY-----", "")
                 .replace("-----END PRIVATE KEY-----", "")
                 .replaceAll("\\s+", "");
 
-        // Декодируем Base64 и создаём PrivateKey через BouncyCastle
-        byte[] keyBytes = Base64.getDecoder().decode(privateKeyPem);
-        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
-        PrivateKey privateKey = KeyFactory.getInstance("RSA", "BC").generatePrivate(spec);
-
-        Instant now = Instant.now();
-
-        // Строим JWT с PS256
-        return Jwts.builder()
-                .setHeaderParam("alg", "PS256")
-                .setIssuer((String) keyJson.get("service_account_id"))
-                .setAudience("https://iam.api.cloud.yandex.net/iam/v1/tokens")
-                .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(now.plusSeconds(3600)))
-                .signWith(privateKey, SignatureAlgorithm.PS256)
-                .compact();
+        byte[] keyBytes = Base64.getDecoder().decode(privateKeyContent);
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
+        return KeyFactory.getInstance("RSA").generatePrivate(keySpec);
     }
 }

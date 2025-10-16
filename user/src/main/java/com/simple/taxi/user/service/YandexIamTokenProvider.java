@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.io.File;
 import java.time.Instant;
@@ -45,6 +46,6 @@ public class YandexIamTokenProvider {
             expiresAt = Instant.now().plusSeconds(3600);
 
             return cachedToken;
-        });
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 }
