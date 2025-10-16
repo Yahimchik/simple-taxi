@@ -22,3 +22,7 @@ spring:
 logging:
   level:
     liquibase: DEBUG
+
+yandex:
+  geocoder:
+    key-file: config/yandex/authorized_key.json
