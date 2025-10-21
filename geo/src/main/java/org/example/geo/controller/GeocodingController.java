@@ -1,13 +1,15 @@
-package com.simple.taxi.user.controller;
+package org.example.geo.controller;
 
-import com.simple.taxi.user.model.dto.GeoResult;
-import com.simple.taxi.user.service.GeocodingService;
 import lombok.RequiredArgsConstructor;
+import org.example.geo.model.dto.GeoResult;
+import org.example.geo.service.GeocodingService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/geocode")
@@ -17,7 +19,7 @@ public class GeocodingController {
     private final GeocodingService geocodingService;
 
     @GetMapping
-    public Mono<GeoResult> geocode(@RequestParam String address
+    public Mono<List<GeoResult>> geocode(@RequestParam String address
     ) {
         return geocodingService.geocode(address, null, null);
     }
