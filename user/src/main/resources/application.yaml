@@ -26,3 +26,4 @@ logging:
 yandex:
   geocoder:
     key-file: config/yandex/authorized_key.json
+    api-key: 703e6b5f-acd1-4aa8-b4f0-051633057e0e
