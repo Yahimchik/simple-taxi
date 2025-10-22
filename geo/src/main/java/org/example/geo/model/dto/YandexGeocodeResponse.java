@@ -1,4 +1,4 @@
-package com.simple.taxi.user.model.dto;
+package org.example.geo.model.dto;
 
 import lombok.Getter;
 import lombok.Setter;

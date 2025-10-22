@@ -1,6 +1,6 @@
-package com.simple.taxi.user.repository;
+package org.example.geo.repository;
 
-import com.simple.taxi.user.model.entities.Address;
+import org.example.geo.model.entities.Address;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Mono;
 

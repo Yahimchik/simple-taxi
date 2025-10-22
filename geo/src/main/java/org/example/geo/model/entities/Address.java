@@ -1,4 +1,4 @@
-package com.simple.taxi.user.model.entities;
+package org.example.geo.model.entities;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;

@@ -15,11 +15,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @Table("user_profiles")
 public class UserProfile {
-
     @Id
     private UUID id;
-
-    private List<Address> addresses;
     private String firstName;
     private String lastName;
     private String avatarUrl;
