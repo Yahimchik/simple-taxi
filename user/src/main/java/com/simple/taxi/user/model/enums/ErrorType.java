@@ -12,8 +12,8 @@ public enum ErrorType {
 
     SETTINGS_NOT_FOUND("Settings not found"),
 
-    USER_PROFILE_NOT_FOUND("User profile not found");
-
+    USER_PROFILE_NOT_FOUND("User profile not found"),
+    COUNT_OF_PHOTOS_EXCEEDED("Count of photos exceeded");
     private final String description;
 
     ErrorType(String description) {
