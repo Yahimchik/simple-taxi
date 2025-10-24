@@ -7,6 +7,8 @@ public enum ErrorType {
     ACCESS_DENIED("Access denied"),
 
     FIELD_VALIDATION("Field validation error"),
+    FILE_IMAGE_TYPE("File image type"),
+    FILE_PDF_TYPE("File PDF type"),
 
     INTERNAL_ERROR("Internal server error"),
 

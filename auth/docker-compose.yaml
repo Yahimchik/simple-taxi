@@ -1,3 +1,10 @@
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  minio-data:
+
 services:
   postgres:
     image: postgres:17
@@ -10,13 +17,16 @@ services:
     ports:
       - "5433:5432"
     command: ["postgres", "-c", "wal_level=logical", "-c", "max_replication_slots=10", "-c", "max_wal_senders=10"]
-
+    networks:
+      - backend
 
   redis:
     image: redis:7
     container_name: redis
     ports:
       - "6379:6379"
+    networks:
+      - backend
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -53,6 +63,9 @@ services:
       SPRING_KAFKA_PRODUCER_RETRIES: 10
       SPRING_KAFKA_PRODUCER_PROPERTIES_RETRY_BACKOFF_MS: 500
 
+    networks:
+      - backend
+
   connect:
     image: debezium/connect:2.2
     container_name: debezium_connect
@@ -77,6 +90,8 @@ services:
       - postgres
     volumes:
       - ./connectors:/etc/kafka-connect/connectors
+    networks:
+      - backend
 
   akhq:
     image: tchiotludo/akhq
@@ -116,4 +131,5 @@ services:
 
     depends_on:
       - kafka
-
+    networks:
+      - backend

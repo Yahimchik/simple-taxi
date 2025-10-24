@@ -6,4 +6,5 @@
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
     <include file="db/changelog/V1/2025-10-10-init-tables.xml"/>
     <include file="db/changelog/V1/2025-11-10-create-settings-table.xml"/>
+    <include file="db/changelog/V1/2025-24-10-create-user-file-table.xml"/>
 </databaseChangeLog>

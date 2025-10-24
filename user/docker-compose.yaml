@@ -1,6 +1,7 @@
 services:
   user_postgres:
-    image: postgres:17
+    build:
+      context: ./docker/postgres
     container_name: user_postgres
     restart: on-failure
     environment:

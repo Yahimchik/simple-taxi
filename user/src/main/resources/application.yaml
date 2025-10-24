@@ -1,15 +1,15 @@
 spring:
   liquibase:
-    url: jdbc:postgresql://localhost:5434/user_db
-    user: user
-    password: password
+    url: jdbc:postgresql://${DB_HOST}/${DB_NAME}
+    user: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.xml
 
   r2dbc:
     url: r2dbc:postgresql://localhost:5434/user_db
-    username: user
-    password: password
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   kafka:
     bootstrap-servers: localhost:29092
@@ -25,12 +25,6 @@ logging:
 
 minio:
   url: http://localhost:9000
-  access-key: minioadmin
-  secret-key: minioadmin
-  bucket: simple-taxi-users
-
-
-yandex:
-  geocoder:
-    key-file: config/yandex/authorized_key.json
-    api-key: 703e6b5f-acd1-4aa8-b4f0-051633057e0e
+  access-key: ${ACCESS_KEY}
+  secret-key: ${SECRET_KEY}
+  bucket: ${BUCKET}

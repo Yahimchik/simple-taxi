@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+          http://www.liquibase.org/xml/ns/dbchangelog
+          https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.21.xsd">
+
+    <changeSet id="2025-24-10-create-user-file-table" author="Egor">
+        <createTable tableName="user_files">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="user_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="original_file_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="content_type" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="file_type" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="size" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="file_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated_at" type="timestamp"/>
+            <column name="deleted_at" type="timestamp"/>
+        </createTable>
+
+        <!-- Индекс на user_id для ускорения поиска файлов пользователя -->
+        <createIndex tableName="user_files" indexName="idx_user_files_user_id">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="2025-10-24-add-uuid-default" author="Egor">
+        <sql>
+            CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+        </sql>
+        <sql>
+            CREATE EXTENSION IF NOT EXISTS "pg_uuidv7";
+        </sql>
+        <sql>
+            ALTER TABLE user_files
+                ALTER COLUMN id SET DEFAULT uuid_generate_v7();
+        </sql>
+    </changeSet>
+
+    <changeSet id="2025-10-24-add-new-fields-user-files" author="Egor">
+        <!-- Добавляем новые колонки -->
+        <addColumn tableName="user_files">
+            <column name="is_deleted" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <!-- Индекс для быстрого поиска только активных файлов -->
+        <createIndex tableName="user_files" indexName="idx_user_files_is_deleted">
+            <column name="is_deleted"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

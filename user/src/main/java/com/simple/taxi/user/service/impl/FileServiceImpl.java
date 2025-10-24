@@ -1,108 +1,65 @@
 package com.simple.taxi.user.service.impl;
 
-import com.simple.taxi.user.model.dto.FileInfoDto;
-import com.simple.taxi.user.model.dto.FileNameAndUUIDAtStorage;
 import com.simple.taxi.user.model.dto.FileResponse;
 import com.simple.taxi.user.model.enums.ErrorType;
+import com.simple.taxi.user.repository.UserFileRepository;
 import com.simple.taxi.user.service.FileService;
 import com.simple.taxi.user.service.FileStorage;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class FileServiceImpl implements FileService {
+
     private static final int SIZE_MB = 10;
-    public static final int INITIAL_CAPACITY_OF_IMAGES = 6;
-//    private final FileRepository repository;
-    private final FileStorage storage;
     private static final int PDF_FILE_SIZE_MB = 30;
+    private final FileStorage storage;
+    private final UserFileRepository userFileRepository;
 
     @Override
-    public FileResponse saveImageFile(MultipartFile file) {
-        if (file.getSize() >= SIZE_MB * 1024 * 1024) {
-//            throw new ValidationException(ErrorType.FILE_SIZE, SIZE_MB);
+    public Mono<FileResponse> saveImageFile(FilePart file) {
+        if (file.headers().getContentType() != null &&
+                file.headers().getContentType().toString().startsWith("image")) {
+            return storage.addFile(file); // уже возвращает FileResponse с URL
         }
-        if (file.getContentType() != null) {
-            String type = file.getContentType().split("/")[0];
-            if ("image".equals(type)) {
-                return fillFile(file);
-            }
-        }
-//        throw new ValidationException(ErrorType.FILE_IMAGE_TYPE);
-        return new FileResponse(UUID.randomUUID(), "");
+        return Mono.error(new ValidationException(ErrorType.FILE_IMAGE_TYPE.getDescription()));
     }
 
     @Override
-    public FileResponse savePdfFile(MultipartFile file) {
-        if (file.getSize() >= PDF_FILE_SIZE_MB * 1024 * 1024) {
-//            throw new ValidationException(ErrorType.FILE_SIZE, PDF_FILE_SIZE_MB);
+    public Mono<FileResponse> savePdfFile(FilePart file) {
+        if (file.filename().toLowerCase().endsWith(".pdf")) {
+            return storage.addFile(file); // уже возвращает FileResponse с URL
         }
-        if (file.getContentType() != null) {
-            String type = file.getOriginalFilename().split("\\.")[1];
-            if ("pdf".equals(type)) {
-                return fillFile(file);
-            }
-        }
-//        throw new ValidationException(ErrorType.FILE_PDF_TYPE);
-        return new FileResponse(UUID.randomUUID(), "");
-    }
-
-    private FileResponse fillFile(MultipartFile file) {
-        FileNameAndUUIDAtStorage fileUUIDAndNameInStorage = storage.addFile(file);
-        UUID uuidFile = fileUUIDAndNameInStorage.id();
-//        FileEntity entity = new FileEntity();
-//        entity.setId(fileUUIDAndNameInStorage.getUuid());
-//        entity.setFileName(fileUUIDAndNameInStorage.getFileName());
-//        entity.setCreatedAt(ZonedDateTime.now());
-//        entity.setOriginalFileName(file.getOriginalFilename());
-//        repository.save(entity);
-        return new FileResponse(uuidFile, getInfo(uuidFile).fileName());
-    }
-
-
-    @Override
-    public List<FileResponse> saveImageFiles(MultipartFile[] files) {
-        List<FileResponse> images = new ArrayList<>(INITIAL_CAPACITY_OF_IMAGES);
-        if (files.length <= INITIAL_CAPACITY_OF_IMAGES) {
-            for (MultipartFile file : files) {
-                images.add(saveImageFile(file));
-            }
-        } else {
-            throw new ValidationException(ErrorType.COUNT_OF_PHOTOS_EXCEEDED.getDescription());
-        }
-        return images;
+        return Mono.error(new ValidationException(ErrorType.FILE_PDF_TYPE.getDescription()));
     }
 
     @Override
-    public FileInfoDto getInfo(UUID idFile) {
-//        FileEntity file = repository.getReferenceById(idFile);
-        return new FileInfoDto(UUID.randomUUID(), "","");
+    public java.util.List<FileResponse> saveImageFiles(FilePart[] files) {
+        throw new UnsupportedOperationException("Multiple file upload not yet implemented for reactive service");
     }
-
-//    @Override
-//    public FileEntity findFileById(final UUID fileId) {
-//        return repository.findById(fileId)
-//                .orElseThrow(() -> new ValidationException(FILE_NOT_FOUND));
-//    }
-//
-//    @Override
-//    public List<FileEntity> findFilesByIds(final Set<UUID> fileIds) throws ValidationException {
-//        return repository.findAllById(fileIds);
-//    }
 
     @Override
-    public void deleteById(final UUID fileId) {
-//        repository.deleteById(fileId);
+    public Mono<FileResponse> getInfo(UUID fileId) {
+        return userFileRepository.findById(fileId)
+                .flatMap(file ->
+                        storage.getUrl(file.getFileName())
+                                .map(url -> new FileResponse(
+                                        file.getId(),
+                                        file.getFileName(),
+                                        file.getOriginalFileName(),
+                                        url
+                                ))
+                );
     }
 
-
+    @Override
+    public void deleteById(UUID fileId) {
+        // Реализация позже
+    }
 }

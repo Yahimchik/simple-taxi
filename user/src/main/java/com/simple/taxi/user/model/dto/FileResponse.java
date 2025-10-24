@@ -4,6 +4,8 @@ import java.util.UUID;
 
 public record FileResponse(
         UUID id,
+        String fileName,
+        String originalFileName,
         String url
 ) {
 }
