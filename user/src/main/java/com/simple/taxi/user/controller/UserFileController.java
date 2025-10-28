@@ -13,14 +13,18 @@ import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
+import static com.simple.taxi.user.constant.UrlConstant.USER_FILE_API;
+
 @RestController
-@RequestMapping("/users")
+@RequestMapping(USER_FILE_API)
 @RequiredArgsConstructor
 public class UserFileController {
 
     private final FileService fileService;
 
-    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(
             summary = "Загрузить файл",
             description = "Загружает изображение или PDF в MinIO",
@@ -33,5 +37,10 @@ public class UserFileController {
     )
     public Mono<FileResponse> uploadFile(@RequestPart("file") FilePart file) {
         return fileService.saveImageFile(file);
+    }
+
+    @DeleteMapping
+    public Mono<Void> deleteFile(@RequestParam UUID fileId) {
+        return fileService.deleteById(fileId);
     }
 }

@@ -19,7 +19,7 @@
                 <constraints nullable="true"/>
             </column>
 
-            <column name="avatar_url" type="TEXT">
+            <column name="avatar_id" type="UUID">
                 <constraints nullable="true"/>
             </column>
 

@@ -17,9 +17,9 @@ import java.util.UUID;
 public class UserProfile {
     @Id
     private UUID id;
+    private UUID avatarId;
     private String firstName;
     private String lastName;
-    private String avatarUrl;
     private String email;
     private String phone;
     private Instant createdAt;

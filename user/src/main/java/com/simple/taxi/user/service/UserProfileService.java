@@ -23,7 +23,7 @@ public interface UserProfileService {
 
     Mono<UserProfileDTO> getProfileByPhone(String phone);
 
-    Mono<UserProfileDTO> updateAvatar(UUID userId, String avatarUrl);
+    Mono<UserProfileDTO> updateAvatar(UUID userId, UUID avatarId);
 
     Mono<UserProfileDTO> updatePhone(UUID userId, String phone);
 }

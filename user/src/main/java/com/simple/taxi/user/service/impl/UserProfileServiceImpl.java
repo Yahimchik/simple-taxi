@@ -59,10 +59,10 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public Mono<UserProfileDTO> updateAvatar(UUID userId, String avatarUrl) {
+    public Mono<UserProfileDTO> updateAvatar(UUID userId, UUID avatarId) {
         return repository.findById(userId)
                 .flatMap(profile -> {
-                    profile.setAvatarUrl(avatarUrl);
+                    profile.setAvatarId(avatarId);
                     profile.setUpdatedAt(Instant.now());
                     return repository.save(profile);
                 })

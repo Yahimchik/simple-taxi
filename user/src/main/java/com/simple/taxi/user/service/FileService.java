@@ -12,13 +12,11 @@ public interface FileService {
 
     Mono<FileResponse> savePdfFile(FilePart file);
 
-    List<FileResponse> saveImageFiles(FilePart[] files);
-
     Mono<FileResponse> getInfo(UUID idFile);
 
 //    FileEntity findFileById(final UUID fileId);
 //
 //    List<FileEntity> findFilesByIds(final Set<UUID> fileId);
 
-    void deleteById(final UUID fileId);
+    Mono<Void> deleteById(final UUID fileId);
 }

@@ -64,8 +64,9 @@ public class GlobalExceptionHandler {
 
     private HttpStatus resolveHttpStatus(ErrorType errorType) {
         return switch (errorType) {
-            case USER_PROFILE_NOT_FOUND -> HttpStatus.NOT_FOUND;
+            case USER_PROFILE_NOT_FOUND, FILE_NOT_FOUND, FILE_ALREADY_DELETED -> HttpStatus.NOT_FOUND;
             case ACCESS_DENIED -> HttpStatus.FORBIDDEN;
+            case FAILED_TO_DELETE_FILE, FAILED_TO_UPLOAD_FILE -> HttpStatus.CONFLICT;
             case FIELD_VALIDATION -> HttpStatus.BAD_REQUEST;
             default -> HttpStatus.INTERNAL_SERVER_ERROR;
         };
