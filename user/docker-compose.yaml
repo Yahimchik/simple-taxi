@@ -22,7 +22,7 @@ services:
       MINIO_ROOT_PASSWORD: minioadmin
     command: server /data --console-address ":9002"
     volumes:
-      - ./minio-data:/data
+      - minio_data:/data
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
       interval: 10s
@@ -30,4 +30,4 @@ services:
       retries: 3
 
 volumes:
-   minio-data:
+  minio_data:
