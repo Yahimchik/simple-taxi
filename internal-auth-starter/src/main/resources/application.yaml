@@ -1,0 +1,13 @@
+internal:
+  jwt:
+    secret: "12345678901234567890123456789012"
+
+server:
+  port: 5050
+
+gateway:
+  public-paths:
+    - /v3/api-docs/**
+    - /swagger-ui/**
+    - /swagger-ui.html
+    - /actuator/**

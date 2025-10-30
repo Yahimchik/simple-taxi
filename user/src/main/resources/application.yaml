@@ -28,3 +28,15 @@ minio:
   access-key: ${ACCESS_KEY}
   secret-key: ${SECRET_KEY}
   bucket: ${BUCKET}
+
+internal:
+  jwt:
+    secret: "12345678901234567890123456789012" # ровно 32 символа
+
+gateway:
+  public-paths:
+    - /v3/api-docs/**
+    - /swagger-ui/**
+    - /swagger-ui.html
+    - /actuator/**
+

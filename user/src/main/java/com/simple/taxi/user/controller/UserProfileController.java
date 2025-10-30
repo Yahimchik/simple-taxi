@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.simpletaxi.internalauthstarter.security.PublicEndpoint;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -84,6 +85,7 @@ public class UserProfileController {
 
     @GetMapping
     @Operation(summary = "Search user profiles by first or last name")
+    @PublicEndpoint
     public Flux<UserProfileDTO> searchProfiles(
             @Parameter(description = "Search query (first or last name)") @RequestParam String query) {
         return userProfileService.searchProfiles(query);

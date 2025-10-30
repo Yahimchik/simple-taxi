@@ -1,0 +1,53 @@
+server:
+  port: 6060
+
+spring:
+  cloud:
+    gateway:
+      forwarded-headers-strategy: framework
+      routes:
+        # Auth service routes
+        - id: auth-service
+          uri: http://localhost:9090
+          predicates:
+            - Path=/auth/**, /v3/api-docs/auth-service/**
+          filters:
+            - RewritePath=/v3/api-docs/auth-service(?<remaining>/.*|$), /v3/api-docs${remaining}
+
+        # User service Swagger route
+        - id: user-service-swagger
+          uri: http://localhost:8080
+          predicates:
+            - Path=/v3/api-docs/user-service/**
+          filters:
+            - RewritePath=/v3/api-docs/user-service(?<remaining>/.*|$), /v3/api-docs${remaining}
+
+        # User service API route
+        - id: user-service-api
+          uri: http://localhost:8080
+          predicates:
+            - Path=/user-profiles/**
+          filters:
+            - RewritePath=/user-profiles(?<remaining>/.*)?$, /api/v1/user-profiles${remaining}
+
+  jwt:
+    access:
+      secret: "SuperSecretKeyForAccessTokenSuperSecretKeyForAccessToken"
+
+internal:
+  jwt:
+    secret: "12345678901234567890123456789012"
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: Auth Service
+        url: /v3/api-docs/auth-service
+      - name: User Service
+        url: /v3/api-docs/user-service
+
+gateway:
+  public-paths:
+    - /v3/api-docs/**
+    - /swagger-ui/**
+    - /swagger-ui.html
