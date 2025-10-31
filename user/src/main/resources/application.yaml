@@ -33,10 +33,10 @@ internal:
   jwt:
     secret: "12345678901234567890123456789012" # ровно 32 символа
 
-gateway:
-  public-paths:
-    - /v3/api-docs/**
-    - /swagger-ui/**
-    - /swagger-ui.html
-    - /actuator/**
+#gateway:
+#  public-paths:
+#    - /v3/api-docs/**
+#    - /swagger-ui/**
+#    - /swagger-ui.html
+#    - /actuator/**
 

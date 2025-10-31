@@ -2,6 +2,7 @@ package org.simpletaxi.internalauthstarter.config;
 
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.simpletaxi.internalauthstarter.security.PublicEndpoint;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -12,8 +13,9 @@ import org.springframework.web.reactive.result.method.RequestMappingInfoHandlerM
 import java.util.HashSet;
 import java.util.Set;
 
-@Component
+@Slf4j
 @Getter
+@Component
 public class PublicEndpointRegistry {
 
     private final ApplicationContext applicationContext;
@@ -31,13 +33,17 @@ public class PublicEndpointRegistry {
     public void init() {
         String[] beans = applicationContext.getBeanNamesForType(RequestMappingInfoHandlerMapping.class);
         for (String beanName : beans) {
-            RequestMappingInfoHandlerMapping mapping =
-                    applicationContext.getBean(beanName, RequestMappingInfoHandlerMapping.class);
+            var mapping = applicationContext.getBean(beanName, RequestMappingInfoHandlerMapping.class);
 
             mapping.getHandlerMethods().forEach((info, method) -> {
-                boolean isPublic = AnnotatedElementUtils.hasAnnotation(method.getMethod(), PublicEndpoint.class)
-                        || AnnotatedElementUtils.hasAnnotation(method.getBeanType(), PublicEndpoint.class);
-                if (isPublic) {
+                boolean isClassMarkedPublic = method.getBeanType().isAnnotationPresent(PublicEndpoint.class);
+                boolean isMethodMarkedPublic = AnnotatedElementUtils.findMergedAnnotation(method.getMethod(), PublicEndpoint.class) != null;
+
+                if (isMethodMarkedPublic || isClassMarkedPublic) {
+                    info.getPatternsCondition().getPatterns()
+                            .forEach(pattern -> publicPaths.add(pattern.getPatternString()));
+                }
+                if (isMethodMarkedPublic || isClassMarkedPublic) {
                     info.getPatternsCondition().getPatterns()
                             .forEach(pattern -> publicPaths.add(pattern.getPatternString()));
                 }
@@ -46,6 +52,10 @@ public class PublicEndpointRegistry {
     }
 
     public boolean isPublic(String path) {
-        return publicPaths.stream().anyMatch(p -> matcher.match(p, path));
+        boolean result = publicPaths.stream().anyMatch(p -> matcher.match(p, path));
+        if (result) {
+            log.debug("Path [{}] is public (matched one of: {})", path, publicPaths);
+        }
+        return result;
     }
 }

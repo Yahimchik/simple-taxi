@@ -4,9 +4,7 @@ server:
 spring:
   cloud:
     gateway:
-      forwarded-headers-strategy: framework
       routes:
-        # Auth service routes
         - id: auth-service
           uri: http://localhost:9090
           predicates:
@@ -14,7 +12,6 @@ spring:
           filters:
             - RewritePath=/v3/api-docs/auth-service(?<remaining>/.*|$), /v3/api-docs${remaining}
 
-        # User service Swagger route
         - id: user-service-swagger
           uri: http://localhost:8080
           predicates:
@@ -22,7 +19,6 @@ spring:
           filters:
             - RewritePath=/v3/api-docs/user-service(?<remaining>/.*|$), /v3/api-docs${remaining}
 
-        # User service API route
         - id: user-service-api
           uri: http://localhost:8080
           predicates:
@@ -45,9 +41,3 @@ springdoc:
         url: /v3/api-docs/auth-service
       - name: User Service
         url: /v3/api-docs/user-service
-
-gateway:
-  public-paths:
-    - /v3/api-docs/**
-    - /swagger-ui/**
-    - /swagger-ui.html

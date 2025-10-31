@@ -3,7 +3,7 @@ package org.simpletaxi.gateway.filter;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
-import org.simpletaxi.gateway.config.CustomGatewayProperties;
+import org.simpletaxi.internalauthstarter.config.PathProperties;
 import org.simpletaxi.internalauthstarter.service.InternalJwtService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -26,13 +26,13 @@ public class JwtAuthFilter implements GlobalFilter {
 
     private final AntPathMatcher pathMatcher;
     private final InternalJwtService internalJwtService;
-    private final CustomGatewayProperties customGatewayProperties;
+    private final PathProperties pathProperties;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
 
-        boolean isPublic = customGatewayProperties.getPublicPaths()
+        boolean isPublic = pathProperties.getPublicPaths()
                 .stream()
                 .anyMatch(p -> pathMatcher.match(p, path));
 

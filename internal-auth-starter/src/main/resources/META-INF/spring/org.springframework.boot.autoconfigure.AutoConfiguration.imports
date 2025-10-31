@@ -1,1 +1,3 @@
 org.simpletaxi.internalauthstarter.config.InternalAuthAutoConfig
+org.simpletaxi.internalauthstarter.config.PathProperties
+org.simpletaxi.internalauthstarter.config.PublicEndpointRegistry
